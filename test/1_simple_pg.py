@@ -85,11 +85,11 @@ def train(env_name='CartPole-v0', hidden_sizes=[32], lr=1e-2,
             if done:
                 # if episode is over, record info about episode
                 ep_ret, ep_len = sum(ep_rews), len(ep_rews)
-                batch_rets.append(ep_ret)
+                batch_rets.append(ep_ret)  ## for displaying
                 batch_lens.append(ep_len)
 
                 # the weight for each logprob(a|s) is R(tau)
-                batch_weights += [ep_ret] * ep_len
+                batch_weights += [ep_ret] * ep_len  ## for computing the loss
 
                 # reset episode-specific variables
                 obs, done, ep_rews = env.reset()[0], False, []  ###
