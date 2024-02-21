@@ -76,7 +76,7 @@ def train(env_name='CartPole-v0', hidden_sizes=[32], lr=1e-2,
 
             # act in the environment
             act = get_action(torch.as_tensor(obs, dtype=torch.float32))
-            obs, rew, done, _, _ = env.step(act)
+            obs, rew, done, _, _ = env.step(act)   ###
 
             # save action, reward
             batch_acts.append(act)
@@ -89,7 +89,7 @@ def train(env_name='CartPole-v0', hidden_sizes=[32], lr=1e-2,
                 batch_lens.append(ep_len)
 
                 # the weight for each logprob(a|s) is R(tau)
-                batch_weights += [ep_ret] * ep_len  ## for computing the loss
+                batch_weights += [ep_ret] * ep_len  ## list*3 => 3 copies; for computing the loss
 
                 # reset episode-specific variables
                 obs, done, ep_rews = env.reset()[0], False, []  ###
