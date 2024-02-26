@@ -1,30 +1,23 @@
 import numpy as np
 import torch
+from torch.autograd import Variable as v
 
 print("hello world!")
-# #
 
-# a = torch.tensor([1])
-# print(a.item())
-
-d = []
-b = [1, 2, 3]
-c = [1, 2]
-# c = torch.tensor([[2,2],[2,2],[2,2]])
-# print(len(c))
-d.append(b.copy())
-d.append(c.copy())
-c = [1]
-# print(d)
-
-# e = np.array([[[ 0,  1,  2 , 3],
-#   [ 4 , 5 , 6,  7],
-#   [ 8 , 9 ,10, 11]],
-
-#  [[12, 13, 14 ,15],
-#   [16 ,17 ,18, 19],
-#   [20, 21, 22, 23]]])
 # f = np.array([[1,2,3],[4,5,6]])
 # print(f.sum(axis=-1).sum(axis=-1).shape)
 
 print (np.array([3])*3)
+m = v(torch.FloatTensor([[2, 3]]), requires_grad=True)
+# print(type(j.data[0].item()))
+
+# ## matrix multiplication
+# j = torch.Tensor([[2,3]])
+# k = torch.Tensor([[4],[5]])
+# print(j.size(), k.size())
+# print(k@j)
+
+j = torch.Tensor([[2,3]]).requires_grad_(True)
+k = (j*2).retain_grad()
+k.sum().backward()
+print(j.grad, k.grad)
