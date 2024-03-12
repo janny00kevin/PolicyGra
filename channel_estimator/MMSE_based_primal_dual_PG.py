@@ -4,6 +4,7 @@ import numpy as np
 from torch.optim import Adam
 from torch.distributions.normal import Normal
 import matplotlib.pyplot as plt 
+import time
 
 def mlp(sizes, activation=nn.Tanh, output_activation=nn.Softplus):
     layers = []
@@ -13,6 +14,7 @@ def mlp(sizes, activation=nn.Tanh, output_activation=nn.Softplus):
     return nn.Sequential(*layers)
 
 def train(size, hidden_sizes=[64, 32], lr=1e-3, epoch=1000, batch_size=10):
+    start_time = time.time()
     # generate the multilayer peceptron
     n_T, n_R, T = size
     logits_net = mlp(sizes=[2*n_R*T]+hidden_sizes+[2*2*n_R*n_T])
@@ -20,14 +22,16 @@ def train(size, hidden_sizes=[64, 32], lr=1e-3, epoch=1000, batch_size=10):
     lamb, t = [1, 0]
 
     H_mean = 5
-    H_sigma = 0.1
+    H_sigma = 0.2
     
     W_mean = 0
-    W_sigma = 1
+    W_sigma = 0.1
     
     X = np.tile(np.eye(n_T), int(T/n_T))
+    print(X)
 
     batch_loss = []
+    epochs = []
     
 
     for j in range(epoch):
@@ -52,22 +56,27 @@ def train(size, hidden_sizes=[64, 32], lr=1e-3, epoch=1000, batch_size=10):
         for i in range(int(len(logits)/2)):
             PG[i] = lamb*norm*Normal(logits[2*i],logits[2*i+1]).log_prob(h_hat[i])
         loss = PG.mean()
-        if (j+1)%10 == 0:
-            print(norm)
+        if (j)%batch_size == 0:
+            # print(j)
             batch_loss.append(norm)
+            epochs.append(j)
         loss.backward()
         optimizer.step()
         t -= lr*(1-lamb)
 
+    end_time = time.time()
+    print("time:", round((end_time-start_time),2), " sec")
     # plot the loss
-    epochs = np.linspace(0, epoch-1, int(epoch/batch_size))
-    print(epochs)
-    print(len(epochs))
-    # plt.plot()
-
+    plt.plot(epochs,batch_loss)
+    plt.show()
 
 if __name__ == '__main__':
-    epoch = 1000
-    batch_size = 10
-    size = [1, 1, 1]#[2, 4, 8]   # n_T, n_R, T
-    train(size, epoch=epoch, batch_size=batch_size)
+    epoch = 10000
+    batch_size = 100
+    n_T = 2
+    n_R = 1
+    T = n_T*2
+    size = [n_T, n_R, T]#[2, 4, 8]   # n_T, n_R, T
+    train(size, epoch=epoch, batch_size=batch_size, hidden_sizes=[64,32], lr = 1e-4)
+    
+    
