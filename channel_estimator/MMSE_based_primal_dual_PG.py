@@ -75,8 +75,10 @@ if __name__ == '__main__':
     batch_size = 100
     n_T = 2
     n_R = 1
-    T = n_T*2
-    size = [n_T, n_R, T]#[2, 4, 8]   # n_T, n_R, T
-    train(size, epoch=epoch, batch_size=batch_size, hidden_sizes=[64,32], lr = 1e-4)
+    T = n_T*1
+    size = [n_T, n_R, T]
+    hidden_sizes=[64,32]
+    lr = 5e-4
+    train(size, epoch=epoch, batch_size=batch_size, hidden_sizes=hidden_sizes , lr=lr)
     
     
