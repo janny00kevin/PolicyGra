@@ -74,7 +74,7 @@ def train(size, hidden_sizes=[64, 32], lr=1e-3, iteration=1000, batch_size=10,
     plt.show()
 
 if __name__ == '__main__':
-    iteration = 2000
+    iteration = 4000
     epoch = 100
     batch_size = 50
     n_T = 1

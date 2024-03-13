@@ -6,7 +6,7 @@ from torch.distributions.categorical import Categorical
 
 logits = torch.tensor([ 0.25, 0.2, 0.55 ])
 
-m = Categorical(probs = logits)
+m = Categorical(logits = logits)
 sample = m.sample()
 print(torch.exp(m.log_prob(sample)).item())
 
