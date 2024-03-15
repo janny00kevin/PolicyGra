@@ -53,7 +53,7 @@ National Yang Ming Chiao Tung University \\ % Your institution for the title pag
 \begin{frame}{Reference}
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \begin{enumerate}
-    \item  Dmytro Ivakhnenkov, and Carrson C. Fung, "Model-Driven Neural Network Based MIMO Channel Estimator"
+    \item  Carrson C. Fung, and Dmytro Ivakhnenkov, "Model-Driven Neural Network Based MIMO Channel Estimator"
     \item M. Eisen, C. Zhang, L.F.O. Chamon, D.D. Lee and A. Ribeiro, ``Learning optimal power allocations in wireless systems,'' \emph{IEEE Trans. on Signal Processing}, vol. 67(10), pp. 2775-2790, May 2019.
     \item OpenAI Spinning Up introduction to RL Part 3: Intro to Policy Optimization %: \href{https://spinningup.openai.com/en/latest/spinningup/rl_intro3.html}
     % \item S. Shi \emph{et al.}, ``MMSE optimization with per-base-station power constraints for network MIMO systems'', \emph{Proc. of the IEEE Intl. Conf. on Communications}, pp. 4106-4110, Bejing, China, May 2008
@@ -72,7 +72,7 @@ Our objective is to minimize the expected mean square error:
 and it can be written in epigraph form as:
 \begin{align*}
     \min_{t,\h} {t}\\
-    s.t. &\ \mathbb{E}_{\y,\h}\left[\left\| \h-\hat{\h} \right\|^2_2 \right]\\
+    s.t. &\ \mathbb{E}_{\y,\h}\left[\left\| \h-\hat{\h} \right\|^2_2 \right] \leq t\\
 \end{align*}
 
 \end{frame}
@@ -114,18 +114,50 @@ variables alternately using gradient descent and ascent, respectively:
 
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-\begin{frame}{Policy Gradient}
+\begin{frame}[allowframebreaks]{Policy Gradient}
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-Follow the same way as described in Eisen's paper:
+We have the policy gradient theorem:
+\begin{align*}
+    \nabla_{\boldsymbol{\theta}}\mathbb{E}_{\tau}[G(\tau)]
+        =\mathbb{E}_{\tau}\left[\sum\limits_{t=0}^{T-1}G(\tau)
+        \nabla_{\boldsymbol{\theta}}\log{\pi_{\boldsymbol{\theta}}
+        (A_t|S_t)}\right]
+\end{align*}
+At each time step, $t=1,...,T-1$:
+\begin{align*}
+    \nabla_{\boldsymbol{\theta}}\mathbb{E}_{\tau}[G(\tau)]
+        =\mathbb{E}_{\tau}\left[G(\tau)
+        \nabla_{\boldsymbol{\theta}}\log{\pi_{\boldsymbol{\theta}}
+        (A_t|S_t)}\right]
+\end{align*}
+And we can estimate the policy gradient with sample mean:
+\begin{align*}
+    \widehat{\nabla_{\boldsymbol{\theta}}}\mathbb{E}_{\tau}[G(\tau)]
+        =\frac{1}{\left| \mathcal{D}  \right|} \sum\limits_{\mathcal{D}}
+        G(\tau)\nabla_{\boldsymbol{\theta}}\log{\pi_{\boldsymbol{\theta}}
+        (A_t|S_t)}
+\end{align*}
+
+\framebreak
+
+Substitute $G(\tau)$, $\pi_{\boldsymbol{\theta}}(A_t|S_t)$ with 
+$\left\| \h-{\phi}(\mathbf{y};\boldsymbol{\theta}) \right\|^2_2$,
+and $\pi_{\boldsymbol{\theta}}(\hat{h}|\y)$,
+we can get the estimated policy gradient of our problem:
 \begin{align*}
     \widehat{\nabla_{\boldsymbol{\theta}}}
-            \mathbb{E}\left[\left\| \h-\phi(\mathbf{y};\boldsymbol{\theta}) \right\|^2_2 \right]
-            = \left\| \h-\widehat{\phi}(\mathbf{y};\boldsymbol{\theta}) \right\|^2_2
+            \mathbb{E}_{\y,\h}\left[\left\| \h-\phi(\mathbf{y};\boldsymbol{\theta}) \right\|^2_2 \right]
+            = \frac{1}{\left| \mathcal{D}  \right|} \sum\limits_{\mathcal{D}}
+            \left\| \h-\widehat{\phi}(\mathbf{y};\boldsymbol{\theta}) \right\|^2_2
             \nabla_{\boldsymbol{\theta}}
-            \log \pi_{\y,\boldsymbol{\theta}}
-            \left( \widehat{\phi}(\mathbf{y};\boldsymbol{\theta}) \right)
+            \log \pi_{\boldsymbol{\theta}}
+            \left( \hat{\h}|\y \right)
 \end{align*}
+where $\hat{\phi}(\mathbf{y};\boldsymbol{\theta}) = 
+\hat{\h}$ is the sampled output of the policy. 
+
+
 
 \end{frame}
 
@@ -138,23 +170,36 @@ Follow the same way as described in Eisen's paper:
     \node[] (a) {};
     \node[draw, right=3.5cm of a] (MLP) {MLP};
     \node[draw, right=2cm of MLP] (sample) {sample};
-    \draw [->] (MLP) -- node[name=N, align = center] {$\mathcal{N}(\mu_i,\sigma_i)$\\} (sample);
+    \draw [->] (MLP) -- node[name=N, align=center,font=\scriptsize] 
+            {$\mathcal{N}(\mu_i,\sigma_i)$\\
+            \fontsize{6}{6}\selectfont$i=1,...,
+            2n_Rn_T$} (sample);
     \node[draw, above=4cm of N] (batch) {batch};
-    \node[draw, below of=N, align = center]   (env) {Environment \\ $\Y=\H\X+\W$};
-    \draw [->] (sample) --(10,0)--(10,4.8)-- (batch);
-    \draw [->] (env) --(1.8,-1.75)--(1.8,4.8)-- (batch);
+    \node[draw, below of=N, align=center,font=\small]   (env) 
+            {Environment \\ \fontsize{9}{12}\selectfont $\Y=\H\X+\W$};
+    \draw [->] (sample) --(10,0)--(10,4.7)-- (batch);
+    \draw [->] (env) --(1.8,-1.75)--(1.8,4.7)-- (batch);
     \draw [->] (env) --(5.75,-2.5)--(1,-2.5)--(1,5.25)--(5.75,5.25)-- (batch);
     \draw [-]  (1,-2.5)--node[name=H,align=center] {$\h\quad$} (1,5.25);
-    \draw [->] (1.8,0) --node[name=Y,align=center] {$\y$\\} (MLP);
+    \draw [->] (1.8,0) --node[name=Y,align=center,font=\footnotesize]
+            {$\y \in \mathbb{R}^{2n_RT}$\\} (MLP);
     \draw [->] (batch) --(5.75,4)--(2.75,4)--(2.75,1)--(4.2,1)-- (MLP);
-    \draw [-] (sample) --node[name=Hhat,align=center] {$\hat{\h}$\\} (10,0);
+    \draw [-,] (sample) --node[name=Hhat,align=center,font=\footnotesize] 
+            {$\hat{\h}\in\mathbb{R} ^{2n_Tn_R}$\\} (10,0);
     \node [font=\tiny] at (6.15,3) {$\lambda_{k+1} = \left[ \lambda_k + \alpha_{\lambda,k}
-                \left( \frac{1}{\left| \mathcal{D}  \right|} \sum\limits_{\mathcal{D}} \left\| \h-\widehat{\phi}(\mathbf{y};\boldsymbol{\theta}_{k}) \right\|^2_2
-                -t_{k}\right)\right]_{+}$};
+            \left( \frac{1}{\left| \mathcal{D}  \right|} \sum\limits_{\mathcal{D}} \left\| \h-\widehat{\phi}(\mathbf{y};\boldsymbol{\theta}_{k}) \right\|^2_2
+            -t_{k}\right)\right]_{+}$};
     \node [font=\tiny] at (5.65,2.5) {$\boldsymbol{\theta}_{k+1} = \boldsymbol{\theta}_{k} - 
-        \alpha_{\boldsymbol{\theta},k} \lambda_k \widehat{\nabla_{\boldsymbol{\theta}_k}}
-        \mathbb{E}\left[\left\| \h-\phi(\mathbf{y};\boldsymbol{\theta}_k) \right\|^2_2 \right]$};
-    \node [font=\tiny] at (4.6,2) {$t_{k+1} = t_{k} - \alpha_{t,}(1-\lambda_{k+1})$};
+            \alpha_{\boldsymbol{\theta},k} \lambda_k \widehat{\nabla_{\boldsymbol{\theta}_k}}
+            \mathbb{E}\left[\left\| \h-\phi(\mathbf{y};\boldsymbol{\theta}_k) \right\|^2_2 \right]$};
+    \node [font=\tiny] at (4.6,2) {$t_{k+1} = t_{k} - \alpha_{t,k}(1-\lambda_{k+1})$};
+    \node [align=left] at (8.3,-1.8) 
+            {\parbox[b]{1.7cm}{\fontsize{6}{6}\selectfont 
+                $\Y \in n_R \times T$\\
+                $\H \in n_R \times n_T$\\
+                $\X \in n_T \times T$}
+            };
+    % \node at (0,0) {\parbox[b]{3cm}{\fontsize{24}{28}\selectfont Large Text\\ \fontsize{12}{14}\selectfont Normal Text}};
 \end{tikzpicture}
 \end{frame}
 
