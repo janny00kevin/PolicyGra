@@ -141,10 +141,11 @@ And we can estimate the policy gradient with sample mean:
 
 \framebreak
 
-Substitute $G(\tau)$, $\pi_{\boldsymbol{\theta}}(A_t|S_t)$ with 
-$\left\| \h-{\phi}(\mathbf{y};\boldsymbol{\theta}) \right\|^2_2$,
-and $\pi_{\boldsymbol{\theta}}(\hat{h}|\y)$,
-we can get the estimated policy gradient of our problem:
+Our goal is to minimize the mean square error, by substituting 
+$\mathbb{E}_{\tau}[G(\tau)]$, $\pi_{\boldsymbol{\theta}}(A_t|S_t)$ with 
+$\mathbb{E}_{\y,\h}\left[\left\| \h-\phi(\mathbf{y};\boldsymbol{\theta}) \right\|^2_2 \right]$,
+and $\pi_{\boldsymbol{\theta}}(\hat{\h}|\y)$.\\
+Thus, we obtain the estimated policy gradient for our problem:
 \begin{align*}
     \widehat{\nabla_{\boldsymbol{\theta}}}
             \mathbb{E}_{\y,\h}\left[\left\| \h-\phi(\mathbf{y};\boldsymbol{\theta}) \right\|^2_2 \right]
@@ -152,12 +153,10 @@ we can get the estimated policy gradient of our problem:
             \left\| \h-\widehat{\phi}(\mathbf{y};\boldsymbol{\theta}) \right\|^2_2
             \nabla_{\boldsymbol{\theta}}
             \log \pi_{\boldsymbol{\theta}}
-            \left( \hat{\h}|\y \right)
+            \left( \hat{\h}|\y \right),
 \end{align*}
 where $\hat{\phi}(\mathbf{y};\boldsymbol{\theta}) = 
 \hat{\h}$ is the sampled output of the policy. 
-
-
 
 \end{frame}
 
@@ -190,14 +189,15 @@ where $\hat{\phi}(\mathbf{y};\boldsymbol{\theta}) =
             \left( \frac{1}{\left| \mathcal{D}  \right|} \sum\limits_{\mathcal{D}} \left\| \h-\widehat{\phi}(\mathbf{y};\boldsymbol{\theta}_{k}) \right\|^2_2
             -t_{k}\right)\right]_{+}$};
     \node [font=\tiny] at (5.65,2.5) {$\boldsymbol{\theta}_{k+1} = \boldsymbol{\theta}_{k} - 
-            \alpha_{\boldsymbol{\theta},k} \lambda_k \widehat{\nabla_{\boldsymbol{\theta}_k}}
+            \alpha_{\boldsymbol{\theta},k} \lambda_k \widehat{\nabla}_{\boldsymbol{\theta}_k}
             \mathbb{E}\left[\left\| \h-\phi(\mathbf{y};\boldsymbol{\theta}_k) \right\|^2_2 \right]$};
     \node [font=\tiny] at (4.6,2) {$t_{k+1} = t_{k} - \alpha_{t,k}(1-\lambda_{k+1})$};
-    \node [align=left] at (8.3,-1.8) 
+    \node [align=left] at (8.3,-1.75) 
             {\parbox[b]{1.7cm}{\fontsize{6}{6}\selectfont 
                 $\Y \in n_R \times T$\\
                 $\H \in n_R \times n_T$\\
-                $\X \in n_T \times T$}
+                $\X \in n_T \times T$\\
+                $\W \in n_R \times T$}
             };
     % \node at (0,0) {\parbox[b]{3cm}{\fontsize{24}{28}\selectfont Large Text\\ \fontsize{12}{14}\selectfont Normal Text}};
 \end{tikzpicture}
