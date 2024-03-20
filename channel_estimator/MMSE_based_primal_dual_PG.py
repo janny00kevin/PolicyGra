@@ -15,6 +15,8 @@ def mlp(sizes, activation=nn.Tanh, output_activation=nn.Softplus):
 
 def train(size, hidden_sizes=[64, 32], lr=1e-3, iteration=1000, batch_size=10, 
           channel_information = [5, 0.2, 0, 0.01], epoch = 100):
+    device = torch.device("cuda:0" if torch.cuda.is_available() else "cpu")
+    # device = torch.device("cpu")
     start_time = time.time()
     n_T, n_R, T = size
     # generate the multilayer peceptron
@@ -26,7 +28,7 @@ def train(size, hidden_sizes=[64, 32], lr=1e-3, iteration=1000, batch_size=10,
     
     epoch_loss = []
     for i in range(epoch):
-        logits_net = mlp(sizes=[2*n_R*T]+hidden_sizes+[2*2*n_R*n_T])
+        logits_net = mlp(sizes=[2*n_R*T]+hidden_sizes+[2*2*n_R*n_T]).to(device)
         optimizer = Adam(logits_net.parameters(), lr=lr)
         lamb, t = [1, 0]
         iter_loss = []
@@ -40,9 +42,9 @@ def train(size, hidden_sizes=[64, 32], lr=1e-3, iteration=1000, batch_size=10,
             # forward propagation
             y = Y.transpose().reshape(-1).view(np.double)
             h_hat = []
-            logits = logits_net(torch.as_tensor(y, dtype=torch.float32))
+            logits = logits_net(torch.as_tensor(y, dtype=torch.float32).to(device))
             for i in range(int(len(logits)/2)):
-                h_hat.append(Normal(logits[2*i],logits[2*i+1]).sample())
+                h_hat.append(Normal(logits[2*i],logits[2*i+1]).sample().to("cpu"))
 
             # compute loss and update
             optimizer.zero_grad()
@@ -74,8 +76,9 @@ def train(size, hidden_sizes=[64, 32], lr=1e-3, iteration=1000, batch_size=10,
     plt.show()
 
 if __name__ == '__main__':
-    iteration = 4000
-    epoch = 100
+    print(torch.cuda.is_available())
+    iteration = 20000
+    epoch = 1
     batch_size = 50
     n_T = 1
     n_R = 1
