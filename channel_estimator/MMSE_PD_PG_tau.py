@@ -14,15 +14,16 @@ def mlp(sizes, activation=nn.Tanh, output_activation=nn.Softplus):
     return nn.Sequential(*layers)
 
 def train(size, hidden_sizes=[64, 32], lr=1e-3, num_iterations=1000, itr_batch_size=10, 
-          channel_information = [5, 0.2, 0, 0.01], num_epochs = 100, trajectory_size = 10):
-    device = torch.device("cuda:0" if torch.cuda.is_available() else "cpu")
+          channel_information = [5, 0.2, 0, 0.01], num_epochs = 100, num_trajectories = 10):
+    # device = torch.device("cuda:0" if torch.cuda.is_available() else "cpu")
     device = torch.device("cpu")
     start_time = time.time()
     n_T, n_R, T = size
 
     H_mean, H_sigma, W_mean, W_sigma = channel_information
     
-    X = np.tile(np.eye(n_T), int(T/n_T))
+        # X = np.tile(np.eye(n_T), int(T/n_T))
+    X = torch.complex(torch.eye(n_T).tile(T//n_T), torch.zeros(n_T, T)).to(device)
     # print(X)
     
     epoch_loss = []
@@ -30,34 +31,43 @@ def train(size, hidden_sizes=[64, 32], lr=1e-3, num_iterations=1000, itr_batch_s
         ## generate the multilayer peceptron
         logits_net = mlp(sizes=[2*n_R*T]+hidden_sizes+[2*2*n_R*n_T]).to(device)
         optimizer = Adam(logits_net.parameters(), lr=lr)
-        lamb, t = [1, 0]
+        lamb, t = torch.tensor([1, 0]).to(device)
         iter_loss = []
         iterations = []
         for j in range(num_iterations):
-            tau = []
+            tau_h_hat = tau_h = tau_y= torch.zeros(0)
             ## generate trajectories
-            for k in range(trajectory_size):
+            for k in range(num_trajectories):
                 ## generate communication data
-                H = np.random.normal(H_mean, H_sigma, [n_R,2*n_T]).view(np.complex128)
-                W = np.random.normal(W_mean, W_sigma, [n_R,T*2]).view(np.complex128)
-                Y = np.matmul(H,X) + W
+                H = torch.view_as_complex(torch.normal(H_mean, H_sigma, size=(n_R, n_T, 2))).to(device)
+                    # H = np.random.normal(H_mean, H_sigma, [n_R,2*n_T]).view(np.complex128)
+                W = torch.view_as_complex(torch.normal(H_mean, H_sigma, size=(n_R, T, 2))).to(device)
+                    # W = np.random.normal(W_mean, W_sigma, [n_R,T*2]).view(np.complex128)
+                Y = H.matmul(X) + W
+                    # Y = np.matmul(H,X) + W
 
                 ## forward propagation
-                y = Y.transpose().reshape(-1).view(np.double)
-                logits = logits_net(torch.as_tensor(y, dtype=torch.float32).to(device))
-                h_hat = Normal(logits[0:len(logits):2],logits[0:len(logits):2]).sample().to("cpu")
-                h = H.transpose().reshape(-1).view(np.double)
-                tau.append([h, h_hat])
+                    # h = H.transpose().reshape(-1).view(np.double)
+                h = torch.flatten(torch.view_as_real(H))
+                    # y = Y.transpose().reshape(-1).view(np.double)
+                y = torch.flatten(torch.view_as_real(Y))
+                logits = logits_net(y)
+                h_hat = Normal(logits[:len(logits)//2], logits[len(logits)//2:]).sample()
+                    # tau.append([h, h_hat])
+                tau_y = torch.cat((tau_y, y.unsqueeze(0)), 0)
+                tau_h = torch.cat((tau_h, h.unsqueeze(0)), 0)
+                tau_h_hat = torch.cat((tau_h_hat, h_hat.unsqueeze(0)), 0)
 
             ## compute loss and update
             optimizer.zero_grad()
-            tau = [[row[0] for row in tau], [row[1] for row in tau]]  # reshape #####
-            print(np.array(ct[0])-np.array(ct[1]))
-            norm = np.linalg.norm(h-np.double(np.array(h_hat)).view(np.complex128))
-            lamb += lr*(norm-t)  ###
+                # tau = [[row[0] for row in tau], [row[1] for row in tau]]  # reshape #####
+                # print(np.array(ct[0])-np.array(ct[1]))
+                # norm = np.linalg.norm(h-np.double(np.array(h_hat)).view(np.complex128))
+            norm = torch.norm(torch.view_as_complex((tau_h - tau_h_hat).reshape(num_trajectories, n_T*n_R ,2)), dim=1)
+            lamb += lr*(norm.mean() - t)  ###
             PG = torch.zeros(int(len(logits)/2))
             for l in range(int(len(logits)/2)):
-                PG[l] = lamb*norm*Normal(logits[2*l],logits[2*l+1]).log_prob(h_hat[l])
+                PG[l] = lamb*norm.mean()*Normal(logits[2*l],logits[2*l+1]).log_prob(h_hat[l])
             loss = PG.mean()
             if (j)%itr_batch_size == 0:
                 iter_loss.append(norm)
@@ -87,7 +97,7 @@ if __name__ == '__main__':
     num_iterations = 10000
     num_epochs = 10
     itr_batch_size = 50
-    trajectory_size = 1
+    num_trajectories = 1
 
     hidden_sizes=[64,32]
     lr = 1e-4
@@ -98,6 +108,4 @@ if __name__ == '__main__':
     W_mean, W_sigma = 0, 0.1
 
     channel_information = [H_mean, args.hs, W_mean, W_sigma]
-    train([n_T, n_R, T], hidden_sizes, lr , num_iterations, itr_batch_size, channel_information, num_epochs, trajectory_size)
-    
-    
+    train([n_T, n_R, T], hidden_sizes, lr , num_iterations, itr_batch_size, channel_information, num_epochs, num_trajectories)
