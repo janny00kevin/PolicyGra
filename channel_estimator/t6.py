@@ -6,8 +6,9 @@ from torch.distributions.normal import Normal
 # import matplotlib.pyplot as plt 
 # import time
 
-num_trajectories = 2
+num_trajectories = 3
 H_mean = 0; H_sigma = 1
+W_mean = 0; W_sigma = 0.1
 n_R = 1; n_T = 2; T = 2
 hidden_sizes=[64, 32]; lr = 1e-4
 device = torch.device('cpu')
@@ -29,7 +30,7 @@ for k in range(num_trajectories):
     ## generate communication data
     H = torch.view_as_complex(torch.normal(H_mean, H_sigma, size=(n_R, n_T, 2))).to(device)
         # H = np.random.normal(H_mean, H_sigma, [n_R,2*n_T]).view(np.complex128)
-    W = torch.view_as_complex(torch.normal(H_mean, H_sigma, size=(n_R, T, 2))).to(device)
+    W = torch.view_as_complex(torch.normal(W_mean, W_sigma, size=(n_R, T, 2))).to(device)
         # W = np.random.normal(W_mean, W_sigma, [n_R,T*2]).view(np.complex128)
     Y = H.matmul(X) + W
         # Y = np.matmul(H,X) + W
@@ -62,12 +63,26 @@ norm = torch.norm(torch.view_as_complex((tau_h - tau_h_hat).reshape(num_trajecto
 # print(norm)
 # batch_loss = lamb*norm.mean()*Normal(logits[:len(logits)//2],logits[len(logits//2)]).log_prob(h_hat[l])
 
-batch_loss = lamb*norm.mean()*Normal(logits_net(tau_y)[:, :logits.size(dim=0)//2], 
+batch_loss = lamb*norm.unsqueeze(1)*Normal(logits_net(tau_y)[:, :logits.size(dim=0)//2], 
                                      logits_net(tau_y)[:, logits.size(dim=0)//2:]).log_prob(tau_h_hat)
 # print(Normal(logits_net(tau_y)[:, :logits.size(dim=0)//2], logits_net(tau_y)[:, logits.size(dim=0)//2:]))
 # print(tau_h_hat.shape)
-print(batch_loss.mean())
-print(len(logits))
+# print(Normal(logits_net(tau_y)[:, :logits.size(dim=0)//2], 
+                                    #  logits_net(tau_y)[:, logits.size(dim=0)//2:]).log_prob(tau_h_hat).size())
+
+print(batch_loss)
+# print(logits_net(tau_y)[:, :logits.size(dim=0)//2])
+print(tau_h)
+# print(torch.view_as_complex(tau_h.reshape(num_trajectories, n_T*n_R ,2)))
+# print(torch.norm(torch.view_as_complex(tau_h.reshape(num_trajectories, n_T*n_R ,2)), dim=1).type())
+a = torch.tensor([2.,3.,4.])
+a1 = a.unsqueeze(1)
+print(a1)
+b = a1*(tau_h)
+print(b)
+
+
+# print(len(logits))
 
 # print(logits_net(tau_y))
 # print(logits_net(tau_y)[:, :logits.size(dim=0)//2])

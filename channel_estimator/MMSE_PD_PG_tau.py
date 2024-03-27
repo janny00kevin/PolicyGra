@@ -65,8 +65,8 @@ def train(size, hidden_sizes=[64, 32], lr=1e-3, num_iterations=1000, itr_batch_s
                 # norm = np.linalg.norm(h-np.double(np.array(h_hat)).view(np.complex128))
             norm = torch.norm(torch.view_as_complex((tau_h - tau_h_hat).reshape(num_trajectories, n_T*n_R ,2)), dim=1)
             lamb += lr*(norm.mean() - t)  ###
-            batch_loss = lamb*norm.mean()*Normal(logits_net(tau_y)[:, :logits.size(dim=0)//2], 
-                                     logits_net(tau_y)[:, logits.size(dim=0)//2:]).log_prob(tau_h_hat).mean()
+            batch_loss = lamb*(norm.unsqueeze(1)*Normal(logits_net(tau_y)[:, :logits.size(dim=0)//2], 
+                                     logits_net(tau_y)[:, logits.size(dim=0)//2:]).log_prob(tau_h_hat)).mean() ###
             if (j)%itr_batch_size == 0:
                 iter_loss.append(norm.mean())
                 iterations.append(j)
@@ -79,6 +79,7 @@ def train(size, hidden_sizes=[64, 32], lr=1e-3, num_iterations=1000, itr_batch_s
     print("time:", round((end_time-start_time),2), " sec")
     ## plot the loss
     epoch_loss = np.array(epoch_loss).mean(-2)
+    # print(epoch_loss.size())
     plt.plot(iterations, epoch_loss)
     plt.suptitle("MMSE based PD with PG channel estimator")
     plt.title('epoch:%s, $[n_T,n_R,T]$:[%s,%s,%s], lr:%s, $\\sigma_H$:%s, |D|:%s' 
