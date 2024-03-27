@@ -67,6 +67,7 @@ batch_loss = lamb*norm.mean()*Normal(logits_net(tau_y)[:, :logits.size(dim=0)//2
 # print(Normal(logits_net(tau_y)[:, :logits.size(dim=0)//2], logits_net(tau_y)[:, logits.size(dim=0)//2:]))
 # print(tau_h_hat.shape)
 print(batch_loss.mean())
+print(len(logits))
 
 # print(logits_net(tau_y))
 # print(logits_net(tau_y)[:, :logits.size(dim=0)//2])

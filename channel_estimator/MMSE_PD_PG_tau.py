@@ -31,7 +31,7 @@ def train(size, hidden_sizes=[64, 32], lr=1e-3, num_iterations=1000, itr_batch_s
         ## generate the multilayer peceptron
         logits_net = mlp(sizes=[2*n_R*T]+hidden_sizes+[2*2*n_R*n_T]).to(device)
         optimizer = Adam(logits_net.parameters(), lr=lr)
-        lamb, t = torch.tensor([1, 0]).to(device)
+        lamb, t = torch.tensor([1., 0.]).to(device)
         iter_loss = []
         iterations = []
         for j in range(num_iterations):
@@ -41,7 +41,7 @@ def train(size, hidden_sizes=[64, 32], lr=1e-3, num_iterations=1000, itr_batch_s
                 ## generate communication data
                 H = torch.view_as_complex(torch.normal(H_mean, H_sigma, size=(n_R, n_T, 2))).to(device)
                     # H = np.random.normal(H_mean, H_sigma, [n_R,2*n_T]).view(np.complex128)
-                W = torch.view_as_complex(torch.normal(H_mean, H_sigma, size=(n_R, T, 2))).to(device)
+                W = torch.view_as_complex(torch.normal(W_mean, W_sigma, size=(n_R, T, 2))).to(device)
                     # W = np.random.normal(W_mean, W_sigma, [n_R,T*2]).view(np.complex128)
                 Y = H.matmul(X) + W
                     # Y = np.matmul(H,X) + W
@@ -65,14 +65,12 @@ def train(size, hidden_sizes=[64, 32], lr=1e-3, num_iterations=1000, itr_batch_s
                 # norm = np.linalg.norm(h-np.double(np.array(h_hat)).view(np.complex128))
             norm = torch.norm(torch.view_as_complex((tau_h - tau_h_hat).reshape(num_trajectories, n_T*n_R ,2)), dim=1)
             lamb += lr*(norm.mean() - t)  ###
-            PG = torch.zeros(int(len(logits)/2))
-            for l in range(int(len(logits)/2)):
-                PG[l] = lamb*norm.mean()*Normal(logits[2*l],logits[2*l+1]).log_prob(h_hat[l])
-            loss = PG.mean()
+            batch_loss = lamb*norm.mean()*Normal(logits_net(tau_y)[:, :logits.size(dim=0)//2], 
+                                     logits_net(tau_y)[:, logits.size(dim=0)//2:]).log_prob(tau_h_hat).mean()
             if (j)%itr_batch_size == 0:
-                iter_loss.append(norm)
+                iter_loss.append(norm.mean())
                 iterations.append(j)
-            loss.backward()
+            batch_loss.backward()
             optimizer.step()
             t -= lr*(1-lamb)
         epoch_loss.append(iter_loss)
@@ -82,30 +80,36 @@ def train(size, hidden_sizes=[64, 32], lr=1e-3, num_iterations=1000, itr_batch_s
     ## plot the loss
     epoch_loss = np.array(epoch_loss).mean(-2)
     plt.plot(iterations, epoch_loss)
-    plt.title('epoch:%s, $[n_T,n_R,T]$:[%s,%s,%s], lr:%s, sigma:%s' %(num_epochs,n_T,n_R,T,lr,H_sigma) )
+    plt.suptitle("MMSE based PD with PG channel estimator")
+    plt.title('epoch:%s, $[n_T,n_R,T]$:[%s,%s,%s], lr:%s, $\\sigma_H$:%s, |D|:%s' 
+                 %(num_epochs,n_T,n_R,T,lr,H_sigma,num_trajectories))
     plt.xlabel('iterations')
     plt.ylabel('loss')
+    plt.ylim([0, 2])
     plt.show()
 
 if __name__ == '__main__':
     import argparse
     parser = argparse.ArgumentParser()
     parser.add_argument('--hs', type=float, default=0.4)
+    parser.add_argument('--lr', type=float, default=1e-4)
+    parser.add_argument('--ep', type=int, default=10)
+    parser.add_argument('--tau', type=int, default=10)
     args = parser.parse_args()
 
     print(torch.cuda.is_available())
-    num_iterations = 10000
-    num_epochs = 10
-    itr_batch_size = 50
-    num_trajectories = 1
+    num_iterations = 2000
+    # num_epochs = 10
+    itr_batch_size = num_iterations//200
+    # num_trajectories = 1
 
     hidden_sizes=[64,32]
     lr = 1e-4
     
     n_T, n_R= 1, 1
     T = n_T*1
-    H_mean, H_sigma = 0, 0.6
+    H_mean = 0
     W_mean, W_sigma = 0, 0.1
 
     channel_information = [H_mean, args.hs, W_mean, W_sigma]
-    train([n_T, n_R, T], hidden_sizes, lr , num_iterations, itr_batch_size, channel_information, num_epochs, num_trajectories)
+    train([n_T, n_R, T], hidden_sizes, args.lr , num_iterations, itr_batch_size, channel_information, args.ep, args.tau)
