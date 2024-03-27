@@ -35,7 +35,7 @@ Advisor: Professor Carrson C. Fung\\
 \medskip
 National Yang Ming Chiao Tung University \\ % Your institution for the title page
 }
-\date{Mar. 14, 2024}
+\date{Mar.  2024}
 
 \AtBeginSection[]
 {
@@ -139,6 +139,7 @@ And we can estimate the policy gradient with sample mean:
         (A_t|S_t)}
 \end{align*}
 
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \framebreak
 
 Our goal is to minimize the mean square error, by substituting 
@@ -204,7 +205,7 @@ where $\hat{\phi}(\mathbf{y};\boldsymbol{\theta}) =
 \end{frame}
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-\begin{frame}{Simulation Result}
+\begin{frame}[allowframebreaks]{Simulation Result}
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 \begin{figure}
@@ -213,16 +214,42 @@ where $\hat{\phi}(\mathbf{y};\boldsymbol{\theta}) =
 \end{figure}
 
 
-\end{frame}
-
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-\begin{frame}{Simulation Result}
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\framebreak
 
 \begin{figure}
     \includegraphics[width=0.7\textwidth]{Figure_2.png}
     \caption{increase the iterations from 2000 to 4000}
 \end{figure}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\framebreak
+
+\begin{figure}[h!]
+    \centering
+    \begin{subfigure}[b]{0.33\linewidth}
+      \includegraphics[width=\linewidth]{itr_500/Figure_1.png}
+    %   \caption{Image 1}
+    %   \label{fig:image1}
+    \end{subfigure}
+    \begin{subfigure}[b]{0.33\linewidth}
+      \includegraphics[width=\linewidth]{itr_500/Figure_2.png}
+    %   \caption{Image 2}
+    %   \label{fig:image2}
+    \end{subfigure}
+    \begin{subfigure}[b]{0.33\linewidth}
+      \includegraphics[width=\linewidth]{itr_500/Figure_3.png}
+    %   \caption{Image 3}
+    %   \label{fig:image3}
+    \end{subfigure}
+    \begin{subfigure}[b]{0.33\linewidth}
+      \includegraphics[width=\linewidth]{itr_500/Figure_4.png}
+    %   \caption{Image 4}
+    %   \label{fig:image4}
+    \end{subfigure}
+    \caption{Number of trajectories from 1 to 1000}
+    % \label{fig:four_images}
+  \end{figure}
 
 
 \end{frame}

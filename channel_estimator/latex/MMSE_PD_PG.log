@@ -1,4 +1,4 @@
-This is pdfTeX, Version 3.141592653-2.6-1.40.25 (TeX Live 2023) (preloaded format=pdflatex 2024.1.8)  19 MAR 2024 23:29
+This is pdfTeX, Version 3.141592653-2.6-1.40.25 (TeX Live 2023) (preloaded format=pdflatex 2024.1.8)  28 MAR 2024 00:49
 entering extended mode
  restricted \write18 enabled.
  file:line:error style messages enabled.
@@ -942,19 +942,42 @@ File: ursfs.fd 1998/03/24 rsfs font definition file (jk)
 <Figure_1.png, id=278, 462.528pt x 346.896pt>
 File: Figure_1.png Graphic file (type png)
 <use Figure_1.png>
-Package pdftex.def Info: Figure_1.png  used on input line 216.
+Package pdftex.def Info: Figure_1.png  used on input line 255.
 (pdftex.def)             Requested size: 239.60567pt x 179.70413pt.
- [9
-
- <./Figure_1.png>]
-<Figure_2.png, id=308, 462.528pt x 346.896pt>
+<Figure_2.png, id=280, 462.528pt x 346.896pt>
 File: Figure_2.png Graphic file (type png)
 <use Figure_2.png>
-Package pdftex.def Info: Figure_2.png  used on input line 228.
+Package pdftex.def Info: Figure_2.png  used on input line 255.
 (pdftex.def)             Requested size: 239.60567pt x 179.70413pt.
- [10
+<itr_500/Figure_1.png, id=281, 462.528pt x 346.896pt>
+File: itr_500/Figure_1.png Graphic file (type png)
+<use itr_500/Figure_1.png>
+Package pdftex.def Info: itr_500/Figure_1.png  used on input line 255.
+(pdftex.def)             Requested size: 112.95807pt x 84.71765pt.
+<itr_500/Figure_2.png, id=282, 462.528pt x 346.896pt>
+File: itr_500/Figure_2.png Graphic file (type png)
+<use itr_500/Figure_2.png>
+Package pdftex.def Info: itr_500/Figure_2.png  used on input line 255.
+(pdftex.def)             Requested size: 112.95807pt x 84.71765pt.
+<itr_500/Figure_3.png, id=283, 462.528pt x 346.896pt>
+File: itr_500/Figure_3.png Graphic file (type png)
+<use itr_500/Figure_3.png>
+Package pdftex.def Info: itr_500/Figure_3.png  used on input line 255.
+(pdftex.def)             Requested size: 112.95807pt x 84.71765pt.
+<itr_500/Figure_4.png, id=284, 462.528pt x 346.896pt>
+File: itr_500/Figure_4.png Graphic file (type png)
+<use itr_500/Figure_4.png>
+Package pdftex.def Info: itr_500/Figure_4.png  used on input line 255.
+(pdftex.def)             Requested size: 112.95807pt x 84.71765pt.
+ [9
 
- <./Figure_2.png>]
+ <./Figure_1.png>] [10
+
+
+ <./Figure_2.png>] [11
+
+
+ <./itr_500/Figure_1.png> <./itr_500/Figure_2.png> <./itr_500/Figure_3.png> <./itr_500/Figure_4.png>]
 \tf@nav=\write6
 \openout6 = `MMSE_PD_PG.nav'.
 
@@ -971,18 +994,18 @@ L3 programming layer <2024-01-04>
  ***********
  ) 
 Here is how much of TeX's memory you used:
- 31891 strings out of 476073
- 649708 string characters out of 5793536
+ 31930 strings out of 476073
+ 650664 string characters out of 5793536
  1946528 words of memory out of 5000000
- 53274 multiletter control sequences out of 15000+600000
+ 53311 multiletter control sequences out of 15000+600000
  576676 words of font info for 105 fonts, out of 8000000 for 9000
  36 hyphenation exceptions out of 8191
  128i,24n,123p,434b,697s stack positions out of 10000i,1000n,20000p,200000b,200000s
 <c:/texlive/2023/texmf-dist/fonts/type1/public/amsfonts/cm/cmbx10.pfb><c:/texlive/2023/texmf-dist/fonts/type1/public/amsfonts/cm/cmbx6.pfb><c:/texlive/2023/texmf-dist/fonts/type1/public/amsfonts/cm/cmbx8.pfb><c:/texlive/2023/texmf-dist/fonts/type1/public/amsfonts/cm/cmbx9.pfb><c:/texlive/2023/texmf-dist/fonts/type1/public/amsfonts/cm/cmex10.pfb><c:/texlive/2023/texmf-dist/fonts/type1/public/amsfonts/cmextra/cmex7.pfb><c:/texlive/2023/texmf-dist/fonts/type1/public/amsfonts/cm/cmmi10.pfb><c:/texlive/2023/texmf-dist/fonts/type1/public/amsfonts/cm/cmmi5.pfb><c:/texlive/2023/texmf-dist/fonts/type1/public/amsfonts/cm/cmmi6.pfb><c:/texlive/2023/texmf-dist/fonts/type1/public/amsfonts/cm/cmmi7.pfb><c:/texlive/2023/texmf-dist/fonts/type1/public/amsfonts/cm/cmmi8.pfb><c:/texlive/2023/texmf-dist/fonts/type1/public/amsfonts/cm/cmmib10.pfb><c:/texlive/2023/texmf-dist/fonts/type1/public/amsfonts/cmextra/cmmib5.pfb><c:/texlive/2023/texmf-dist/fonts/type1/public/amsfonts/cmextra/cmmib6.pfb><c:/texlive/2023/texmf-dist/fonts/type1/public/amsfonts/cmextra/cmmib8.pfb><c:/texlive/2023/texmf-dist/fonts/type1/public/amsfonts/cm/cmr10.pfb><c:/texlive/2023/texmf-dist/fonts/type1/public/amsfonts/cm/cmr12.pfb><c:/texlive/2023/texmf-dist/fonts/type1/public/amsfonts/cm/cmr5.pfb><c:/texlive/2023/texmf-dist/fonts/type1/public/amsfonts/cm/cmr6.pfb><c:/texlive/2023/texmf-dist/fonts/type1/public/amsfonts/cm/cmr8.pfb><c:/texlive/2023/texmf-dist/fonts/type1/public/amsfonts/cm/cmr9.pfb><c:/texlive/2023/texmf-dist/fonts/type1/public/amsfonts/cm/cmsy10.pfb><c:/texlive/2023/texmf-dist/fonts/type1/public/amsfonts/cm/cmsy5.pfb><c:/texlive/2023/texmf-dist/fonts/type1/public/amsfonts/cm/cmsy6.pfb><c:/texlive/2023/texmf-dist/fonts/type1/public/amsfonts/cm/cmsy8.pfb><c:/texlive/2023/texmf-dist/fonts/type1/public/amsfonts/cm/cmsy9.pfb><c:/texlive/2023/texmf-dist/fonts/type1/public/amsfonts/cm/cmti10.pfb><c:/texlive/2023/texmf-dist/fonts/type1/public/amsfonts/cm/cmti8.pfb><c:/texlive/2023/texmf-dist/fonts/type1/public/amsfonts/symbols/msbm10.pfb><c:/texlive/2023/texmf-dist/fonts/type1/public/amsfonts/symbols/msbm7.pfb>
-Output written on MMSE_PD_PG.pdf (10 pages, 351108 bytes).
+Output written on MMSE_PD_PG.pdf (11 pages, 500301 bytes).
 PDF statistics:
- 465 PDF objects out of 1000 (max. 8388607)
- 363 compressed objects within 4 object streams
- 21 named destinations out of 1000 (max. 500000)
- 95 words of extra memory for PDF output out of 10000 (max. 10000000)
+ 498 PDF objects out of 1000 (max. 8388607)
+ 388 compressed objects within 4 object streams
+ 23 named destinations out of 1000 (max. 500000)
+ 115 words of extra memory for PDF output out of 10000 (max. 10000000)
 

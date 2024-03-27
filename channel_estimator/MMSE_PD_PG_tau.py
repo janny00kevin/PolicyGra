@@ -99,7 +99,7 @@ if __name__ == '__main__':
     args = parser.parse_args()
 
     print(torch.cuda.is_available())
-    num_iterations = 2000
+    num_iterations = 500
     # num_epochs = 10
     itr_batch_size = num_iterations//200
     # num_trajectories = 1
