@@ -207,23 +207,39 @@ where $\hat{\phi}(\mathbf{y};\boldsymbol{\theta}) =
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \begin{frame}[allowframebreaks]{Simulation Result}
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+"Epoch" and "iteration" in the following 3 pages:\\
+\begin{enumerate}
+    \item The process consisting of data collection followed
+        by model updating is called one "iteration".\\
+    \item Performing the processes above for a number of 
+        iterations, which means that updating the model for a 
+        number of iterations, is called one "epoch" here.\\
+    \item After Performing the whole process number of 
+        epoch times, taking the average of these loss curve 
+        and then plot the figures in the following 3 pages. 
+\end{enumerate}
 
-\begin{figure}
+
+\framebreak
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+
+\begin{figure}[h]
     \includegraphics[width=0.7\textwidth]{Figure_1.png}
     \caption{hidden layer sizes: [64,32], $\mu_H=5, \sigma_H=0.2, \mu_W=0, \sigma_W=0.1 $}
 \end{figure}
 
-
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \framebreak
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 \begin{figure}
     \includegraphics[width=0.7\textwidth]{Figure_2.png}
     \caption{increase the iterations from 2000 to 4000}
 \end{figure}
 
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \framebreak
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
 
 \begin{figure}[h!]
     \centering

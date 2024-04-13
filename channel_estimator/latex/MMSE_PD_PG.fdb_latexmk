@@ -1,10 +1,10 @@
 # Fdb version 4
-["pdflatex"] 1712762341.07506 "d:/proj/channel_estimator/latex/MMSE_PD_PG.tex" "MMSE_PD_PG.pdf" "MMSE_PD_PG" 1712762344.50249 0
+["pdflatex"] 1712940453.75736 "d:/proj/channel_estimator/latex/MMSE_PD_PG.tex" "MMSE_PD_PG.pdf" "MMSE_PD_PG" 1712940455.57168 0
   "Figure_1.png" 1710360551 21481 e60fc808b8a4bc30acf5f1f0fd7ef199 ""
   "Figure_2.png" 1710362172 23811 879d2b3d47348a1492b83474e941aeb3 ""
-  "MMSE_PD_PG.aux" 1712762344 1876 4ccceed48a09cb10cb24ee4079936f07 "pdflatex"
-  "MMSE_PD_PG.nav" 1712762344 1196 1db541227b6c2a03f4dc285bb1333172 "pdflatex"
-  "MMSE_PD_PG.tex" 1712762339 10964 7f869b15d543a477b832f389e05dfe96 ""
+  "MMSE_PD_PG.aux" 1712940455 2002 eaa9c544ea299033a2b65046e6e9986e "pdflatex"
+  "MMSE_PD_PG.nav" 1712940455 1286 c28e805521cd0319f29079ddb3e07ce1 "pdflatex"
+  "MMSE_PD_PG.tex" 1712940453 11626 0ed9f0a08aa8f7cfdba5933d905f6e96 ""
   "Symbol_ShortCut.tex" 1566181848 18447 7ca9d7465cf743847bb72162b75f2dca ""
   "c:/texlive/2023/texmf-dist/fonts/map/fontname/texfonts.map" 1704704899 3524 cb3e574dea2d1052e39280babc910dc8 ""
   "c:/texlive/2023/texmf-dist/fonts/tfm/adobe/zapfding/pzdr.tfm" 1704706995 1528 7e12f4c0fcf5a072cebdcfbfc610f54c ""
@@ -309,7 +309,7 @@
   "c:/texlive/2023/texmf-var/fonts/map/pdftex/updmap/pdftex.map" 1704707027 4948700 b9cbf93211f6ba66155d1a7451195061 ""
   "c:/texlive/2023/texmf-var/web2c/pdftex/pdflatex.fmt" 1704707178 6862507 e8372c19296f24728bababb30bce0a73 ""
   "c:/texlive/2023/texmf.cnf" 1704707013 713 e69b156964470283e0530f5060668171 ""
-  "d:/proj/channel_estimator/latex/MMSE_PD_PG.tex" 1712762339 10964 7f869b15d543a477b832f389e05dfe96 ""
+  "d:/proj/channel_estimator/latex/MMSE_PD_PG.tex" 1712940453 11626 0ed9f0a08aa8f7cfdba5933d905f6e96 ""
   "itr_500/Figure_1.png" 1711555561 66060 451f2a4a056eaa01ba4b2124f8211658 ""
   "itr_500/Figure_2.png" 1711555337 46065 44d6798399aaeb4a0fbcb4a3d3ae01f8 ""
   "itr_500/Figure_3.png" 1711555294 36502 1a280a1ceaf85d5a38ba4fcf3d467627 ""
