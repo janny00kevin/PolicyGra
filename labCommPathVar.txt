@@ -1,0 +1,4 @@
+C:\Users\user\AppData\Local\Programs\Python\Launcher\
+
+C:\Users\user\AppData\Local\Programs\Python\Python312
+C:\Users\user\AppData\Local\Programs\Python\Python312\Scripts

@@ -1,0 +1,1 @@
+C:\vPG\Scripts\Activate.ps1
