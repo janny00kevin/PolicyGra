@@ -25,16 +25,20 @@ Y = H.matmul(X) + W
 # print(H)
 # print(X)
 # print(W)
-print(Y)
-Y_shuffle = Y.reshape(data_size, n_R ,T)
-print(Y_shuffle)
-idx = torch.randperm(Y_shuffle.shape[0])
-print(idx)
-Y_shuffle = Y_shuffle[idx,:,:]
-print(Y_shuffle)
-# y = torch.flatten(torch.view_as_real(Y))
-# print(y.unsqueeze(0))
-# print(Y.size())
-# for i in range(Y.size(1)//T): ## != num_minibatch because here num_epoch = 1
-#     # print(i)
-#     print(Y[:,T*i:T*i+T])
+
+# print(Y)
+# Y_shuffle = Y.reshape(data_size, n_R ,T)
+# print(Y_shuffle)
+# idx = torch.randperm(Y_shuffle.shape[0])
+# print(idx)
+# Y_shuffle = Y_shuffle[idx,:,:]
+# print(Y_shuffle)
+
+t1 = torch.Tensor([[1, 2]])
+t2 = torch.Tensor([[3, 4]])
+# print(t.shape)
+t = torch.complex(t1, t2)
+print(t)
+# print(torch.norm(t, dim=0))
+# print(torch.norm(t, dim=1)**2)
+print(t1**2)
