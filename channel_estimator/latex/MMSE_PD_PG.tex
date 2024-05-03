@@ -15,6 +15,7 @@ matrix,shapes.symbols}
 
 \usepackage[ampersand]{easylist}
 \usepackage{bookmark,booktabs,comment,graphicx,subcaption,epsfig,amsfonts,amsmath,amssymb,mathrsfs,color,enumerate,empheq,wrapfig,empheq,epstopdf}
+\numberwithin{figure}{section}
 
 \DeclareMathOperator*{\tr}{tr}
 \DeclareMathOperator*{\blockdiag}{blockdiag}
@@ -35,7 +36,7 @@ Advisor: Professor Carrson C. Fung\\
 \medskip
 National Yang Ming Chiao Tung University \\ % Your institution for the title page
 }
-\date{Apr. 11 2024}
+\date{May. 2 2024}
 
 \AtBeginSection[]
 {
@@ -53,7 +54,7 @@ National Yang Ming Chiao Tung University \\ % Your institution for the title pag
 \begin{frame}{Reference}
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \begin{enumerate}
-    \item  Carrson C. Fung, and Dmytro Ivakhnenkov, "Model-Driven Neural Network Based MIMO Channel Estimator"
+    \item Carrson C. Fung, and Dmytro Ivakhnenkov, "Model-Driven Neural Network Based MIMO Channel Estimator"
     \item M. Eisen, C. Zhang, L.F.O. Chamon, D.D. Lee and A. Ribeiro, ``Learning optimal power allocations in wireless systems,'' \emph{IEEE Trans. on Signal Processing}, vol. 67(10), pp. 2775-2790, May 2019.
     \item OpenAI Spinning Up introduction to RL Part 3: Intro to Policy Optimization %: \href{https://spinningup.openai.com/en/latest/spinningup/rl_intro3.html}
     % \item S. Shi \emph{et al.}, ``MMSE optimization with per-base-station power constraints for network MIMO systems'', \emph{Proc. of the IEEE Intl. Conf. on Communications}, pp. 4106-4110, Bejing, China, May 2008
@@ -223,7 +224,6 @@ where $\hat{\phi}(\mathbf{y};\boldsymbol{\theta}) =
 \framebreak
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-
 \begin{figure}[h]
     \includegraphics[width=0.7\textwidth]{Figure_1.png}
     \caption{hidden layer sizes: [64,32], $\mu_H=5, \sigma_H=0.2, \mu_W=0, \sigma_W=0.1 $}
@@ -239,7 +239,6 @@ where $\hat{\phi}(\mathbf{y};\boldsymbol{\theta}) =
 
 \framebreak
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-
 
 \begin{figure}[h!]
     \centering
@@ -267,8 +266,134 @@ where $\hat{\phi}(\mathbf{y};\boldsymbol{\theta}) =
     % \label{fig:four_images}
   \end{figure}
 
+\end{frame}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\begin{frame}[allowframebreaks]{Simulation Configuration}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\begin{table}[h]
+    \centering
+    \renewcommand{\arraystretch}{1.1}
+    \begin{tabular}{|c|c|}
+        \hline
+        parameters   &values \\
+        \hline \hline
+        [$n_R,n_T$]                     &[1,1] or [4,36]        \\ \hline
+        $T$                             &$n_T \times 1$         \\ \hline
+        $\mu_H, \sigma_H$               &0, 1          \\ \hline
+        Hidden layer size               &[64,32] or [512,512]   \\ \hline
+        Length of each trajectory       &1                      \\ \hline
+        Batch size = $|\mathcal{D}|$    &10,000         \\ \hline
+        Number of batches               &100            \\ \hline
+        Trainning dataset               &1,000,000      \\ \hline
+        Validation dataset              &2,000          \\ \hline
+        Epoch                           &100 $\sim$ 2,000   \\ \hline
+        Learning rate                   &1e-3 $\sim$ 1e-5  \\ \hline
+    \end{tabular}
+    \end{table}
+
+\framebreak
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\begin{itemize}
+    \item Let the loss be Normalized Mean Squared Error (NMSE):
+        $$NMSE=\frac{1}{N} \sum\limits_{n=1}^N
+        \frac{\left\| \h_n-\phi(\mathbf{y}_n;\boldsymbol{\theta}_k) \right\|^2_2}
+        {\left\| \h_n \right\|^2_2}$$
+        Here, $N$ represents the size of the training or validation dataset, 
+        implying that the Normalized Mean Squared Error (NMSE) is calculated for each epoch.
+    \vspace{12pt}
+    \item Let step size $\alpha_{t,k}$ and $\alpha_{\lambda,k}$ to be ${\alpha_{t,0}}/{k}$
+        and ${\alpha_{\lambda,0}}/{k}$, where $k$ is the iteration index.
+ 
+\end{itemize}
+\end{frame}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\begin{frame}{Simulation Result: $n_R, n_T = 1, 1$}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\begin{figure}[h!]
+    % \centering
+    \begin{subfigure}[b]{0.33\linewidth}
+      \includegraphics[width=\linewidth]{240502/lr0.001_[2, 64, 32, 4]_ep100.png}
+    %   \caption{lr: 1e-3, epoch: 100}
+    %   \label{fig:image1}
+    \end{subfigure}
+    \begin{subfigure}[b]{0.33\linewidth}
+      \includegraphics[width=\linewidth]{240502/lr0.001_[2, 64, 32, 4]_ep500.png}
+    %   \caption{lr: 1e-3, epoch: 100}
+    %   \label{fig:image2}
+    \end{subfigure}
+    \begin{subfigure}[b]{0.33\linewidth}
+      \includegraphics[width=\linewidth]{240502/figure_1_0.0001_[2, 64, 32, 4]_ep100.png}
+    %   \caption{Image 3}
+    %   \label{fig:image3}
+    \end{subfigure}
+    \begin{subfigure}[b]{0.33\linewidth}
+      \includegraphics[width=\linewidth]{240502/figure_1_0.0001_[2, 64, 32, 4]_ep1000.png}
+    %   \caption{Image 4}
+    %   \label{fig:image4}
+    \end{subfigure}
+    \caption{$n_R, n_T$ = [1,1], hidden layer size = [64,32]
+        (a)(b) lr: 1e-3, epoch from 100 to 500
+        (c)(d) lr: 1e-4, epoch from 100 to 1000}
+    % \label{fig:four_images}
+  \end{figure}
+\end{frame}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\begin{frame}{Simulation Result: $n_R, n_T = 4, 36$}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\begin{figure}[h!]
+    % \centering
+    \begin{subfigure}[b]{0.33\linewidth}
+      \includegraphics[width=\linewidth]{240502/lr2e-05_[288, 512, 256, 256, 576]_ep500.png}
+    %   \caption{lr: 1e-3, epoch: 100}
+    %   \label{fig:image1}
+    \end{subfigure}
+    \begin{subfigure}[b]{0.33\linewidth}
+      \includegraphics[width=\linewidth]{240502/lr2e-05_[288, 512, 512, 576]_ep500.png}
+    %   \caption{lr: 1e-3, epoch: 100}
+    %   \label{fig:image2}
+    \end{subfigure}
+    \begin{subfigure}[b]{0.33\linewidth}
+      \includegraphics[width=\linewidth]{240502/figure_1_0.0001_[288, 64, 32, 576]_ep500.png}
+    %   \caption{Image 3}
+    %   \label{fig:image3}
+    \end{subfigure}
+    \begin{subfigure}[b]{0.33\linewidth}
+      \includegraphics[width=\linewidth]{240502/figure_1_lr0.0001_[288, 64, 32, 576]_ep2000.png}
+    %   \caption{Image 4}
+    %   \label{fig:image4}
+    \end{subfigure}
+    \caption{$n_R, n_T$ = [4,36] 
+        (a)(b) hidden layer size = [512,256,256], [512,512] lr: 2e-5, epoch: 500
+        (c)(d) hidden layer size = [64,32] lr: 1e-4, epoch from 500 to 1000}
+    \label{fig:4_36}
+\end{figure}
 
 \end{frame}
 
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\begin{frame}{Conclution $\&$ Problems}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\begin{itemize}
+  \item In Rayleigh fading channel, if we choose an appropriate learning 
+    rate, the loss will converge without raising up or spike and there's 
+    no overfitting problem in at least 2000 epochs.
+  \vspace{12pt}
+  \item However, Professor noticed that the NMSE in linear scale approaches
+    1 but not 0. This could be attributed to the variance generated by the 
+    MLP converging to 0. Consequently, $\hat{\h}$ sampled from this 
+    distribution also converge to $\0$.
+  \item Professor suggested first checking $\hat{\h}$ to identify any 
+    potential issues. Alternatively, removing the sampling process to see 
+    if there is any improvment.
+
+\end{itemize}
+\end{frame}
 
 \end{document}
