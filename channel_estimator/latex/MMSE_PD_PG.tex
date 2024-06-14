@@ -10,6 +10,8 @@ matrix,shapes.symbols}
 
 \mode<presentation> {
 	\usetheme{Madrid}
+
+  
 	% \usetheme{CambridgeUS}
 }
 
@@ -36,7 +38,7 @@ Advisor: Professor Carrson C. Fung\\
 \medskip
 National Yang Ming Chiao Tung University \\ % Your institution for the title page
 }
-\date{May. 2 2024}
+\date{May. 9 2024}
 
 \AtBeginSection[]
 {
@@ -54,7 +56,7 @@ National Yang Ming Chiao Tung University \\ % Your institution for the title pag
 \begin{frame}{Reference}
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \begin{enumerate}
-    \item Carrson C. Fung, and Dmytro Ivakhnenkov, "Model-Driven Neural Network Based MIMO Channel Estimator"
+    \item C. C. Fung, and D. Ivakhnenkov, "Model-Driven Neural Network Based MIMO Channel Estimator"
     \item M. Eisen, C. Zhang, L.F.O. Chamon, D.D. Lee and A. Ribeiro, ``Learning optimal power allocations in wireless systems,'' \emph{IEEE Trans. on Signal Processing}, vol. 67(10), pp. 2775-2790, May 2019.
     \item OpenAI Spinning Up introduction to RL Part 3: Intro to Policy Optimization %: \href{https://spinningup.openai.com/en/latest/spinningup/rl_intro3.html}
     % \item S. Shi \emph{et al.}, ``MMSE optimization with per-base-station power constraints for network MIMO systems'', \emph{Proc. of the IEEE Intl. Conf. on Communications}, pp. 4106-4110, Bejing, China, May 2008
@@ -148,15 +150,15 @@ $\mathbb{E}_{\tau}[G(\tau)]$, $\pi_{\boldsymbol{\theta}}(A_t|S_t)$ with
 $\mathbb{E}_{\y,\h}\left[\left\| \h-\phi(\mathbf{y};\boldsymbol{\theta}) \right\|^2_2 \right]$,
 and $\pi_{\boldsymbol{\theta}}(\hat{\h}|\y)$.\\
 Thus, we obtain the estimated policy gradient for our problem:
-\begin{align*}
+\begin{equation} \label{policy gradient}
     \widehat{\nabla_{\boldsymbol{\theta}}}
             \mathbb{E}_{\y,\h}\left[\left\| \h-\phi(\mathbf{y};\boldsymbol{\theta}) \right\|^2_2 \right]
             = \frac{1}{\left| \mathcal{D}  \right|} \sum\limits_{\mathcal{D}}
             \left\| \h-\widehat{\phi}(\mathbf{y};\boldsymbol{\theta}) \right\|^2_2
             \nabla_{\boldsymbol{\theta}}
             \log \pi_{\boldsymbol{\theta}}
-            \left( \hat{\h}|\y \right),
-\end{align*}
+            \left( \hat{\h}|\y \right)
+\end{equation}
 where $\hat{\phi}(\mathbf{y};\boldsymbol{\theta}) = 
 \hat{\h}$ is the sampled output of the policy. 
 
@@ -166,43 +168,48 @@ where $\hat{\phi}(\mathbf{y};\boldsymbol{\theta}) =
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \begin{frame}{Experiment Diagram}
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\begin{figure}
+  \centering
+  \begin{tikzpicture}[start chain=going below, node distance=50pt]
+      \node[] (a) {};
+      \node[draw, right=3.5cm of a] (MLP) {MLP};
+      \node[draw, right=2cm of MLP] (sample) {sample};
+      \draw [->] (MLP) -- node[name=N, align=center,font=\scriptsize] 
+              {$\mathcal{N}(\mu_i,\sigma_i)$\\
+              \fontsize{6}{6}\selectfont$i=1,...,
+              2n_Rn_T$} (sample);
+      \node[draw, above=4cm of N] (batch) {batch};
+      \node[draw, below of=N, align=center,font=\small]   (env) 
+              {Environment \\ \fontsize{9}{12}\selectfont $\Y=\H\X+\W$};
+      \draw [->] (sample) --(10,0)--(10,4.7)-- (batch);
+      \draw [->] (env) --(1.8,-1.75)--(1.8,4.7)-- (batch);
+      \draw [->] (env) --(5.75,-2.5)--(1,-2.5)--(1,5.25)--(5.75,5.25)-- (batch);
+      \draw [-]  (1,-2.5)--node[name=H,align=center] {$\h\quad$} (1,5.25);
+      \draw [->] (1.8,0) --node[name=Y,align=center,font=\footnotesize]
+              {$\y \in \mathbb{R}^{2n_RT}$\\} (MLP);
+      \draw [->] (batch) --(5.75,4)--(2.75,4)--(2.75,1)--(4.2,1)-- (MLP);
+      \draw [-,] (sample) --node[name=Hhat,align=center,font=\footnotesize] 
+              {$\hat{\h}\in\mathbb{R} ^{2n_Tn_R}$\\} (10,0);
+      \node [font=\tiny] at (6.15,3) {$\lambda_{k+1} = \left[ \lambda_k + \alpha_{\lambda,k}
+              \left( \frac{1}{\left| \mathcal{D}  \right|} \sum\limits_{\mathcal{D}} \left\| \h-\widehat{\phi}(\mathbf{y};\boldsymbol{\theta}_{k}) \right\|^2_2
+              -t_{k}\right)\right]_{+}$};
+      \node [font=\tiny] at (5.65,2.5) {$\boldsymbol{\theta}_{k+1} = \boldsymbol{\theta}_{k} - 
+              \alpha_{\boldsymbol{\theta},k} \lambda_k \widehat{\nabla}_{\boldsymbol{\theta}_k}
+              \mathbb{E}\left[\left\| \h-\phi(\mathbf{y};\boldsymbol{\theta}_k) \right\|^2_2 \right]$};
+      \node [font=\tiny] at (4.6,2) {$t_{k+1} = t_{k} - \alpha_{t,k}(1-\lambda_{k+1})$};
+      \node [align=left] at (8.3,-1.75) 
+              {\parbox[b]{1.7cm}{\fontsize{6}{6}\selectfont 
+                  $\Y \in \mathbb{C}^{n_R \times T}$\\
+                  $\H \in \mathbb{C}^{n_R \times n_T}$\\
+                  $\X \in \mathbb{C}^{n_T \times T}$\\
+                  $\W \in \mathbb{C}^{n_R \times T}$}
+              };
+      % \node at (0,0) {\parbox[b]{3cm}{\fontsize{24}{28}\selectfont Large Text\\ \fontsize{12}{14}\selectfont Normal Text}};
+  \end{tikzpicture}
+  % \caption{exp diagram}
+  \label{fig:exp diagram}
+\end{figure}
 
-\begin{tikzpicture}[start chain=going below, node distance=50pt]
-    \node[] (a) {};
-    \node[draw, right=3.5cm of a] (MLP) {MLP};
-    \node[draw, right=2cm of MLP] (sample) {sample};
-    \draw [->] (MLP) -- node[name=N, align=center,font=\scriptsize] 
-            {$\mathcal{N}(\mu_i,\sigma_i)$\\
-            \fontsize{6}{6}\selectfont$i=1,...,
-            2n_Rn_T$} (sample);
-    \node[draw, above=4cm of N] (batch) {batch};
-    \node[draw, below of=N, align=center,font=\small]   (env) 
-            {Environment \\ \fontsize{9}{12}\selectfont $\Y=\H\X+\W$};
-    \draw [->] (sample) --(10,0)--(10,4.7)-- (batch);
-    \draw [->] (env) --(1.8,-1.75)--(1.8,4.7)-- (batch);
-    \draw [->] (env) --(5.75,-2.5)--(1,-2.5)--(1,5.25)--(5.75,5.25)-- (batch);
-    \draw [-]  (1,-2.5)--node[name=H,align=center] {$\h\quad$} (1,5.25);
-    \draw [->] (1.8,0) --node[name=Y,align=center,font=\footnotesize]
-            {$\y \in \mathbb{R}^{2n_RT}$\\} (MLP);
-    \draw [->] (batch) --(5.75,4)--(2.75,4)--(2.75,1)--(4.2,1)-- (MLP);
-    \draw [-,] (sample) --node[name=Hhat,align=center,font=\footnotesize] 
-            {$\hat{\h}\in\mathbb{R} ^{2n_Tn_R}$\\} (10,0);
-    \node [font=\tiny] at (6.15,3) {$\lambda_{k+1} = \left[ \lambda_k + \alpha_{\lambda,k}
-            \left( \frac{1}{\left| \mathcal{D}  \right|} \sum\limits_{\mathcal{D}} \left\| \h-\widehat{\phi}(\mathbf{y};\boldsymbol{\theta}_{k}) \right\|^2_2
-            -t_{k}\right)\right]_{+}$};
-    \node [font=\tiny] at (5.65,2.5) {$\boldsymbol{\theta}_{k+1} = \boldsymbol{\theta}_{k} - 
-            \alpha_{\boldsymbol{\theta},k} \lambda_k \widehat{\nabla}_{\boldsymbol{\theta}_k}
-            \mathbb{E}\left[\left\| \h-\phi(\mathbf{y};\boldsymbol{\theta}_k) \right\|^2_2 \right]$};
-    \node [font=\tiny] at (4.6,2) {$t_{k+1} = t_{k} - \alpha_{t,k}(1-\lambda_{k+1})$};
-    \node [align=left] at (8.3,-1.75) 
-            {\parbox[b]{1.7cm}{\fontsize{6}{6}\selectfont 
-                $\Y \in \mathbb{C}^{n_R \times T}$\\
-                $\H \in \mathbb{C}^{n_R \times n_T}$\\
-                $\X \in \mathbb{C}^{n_T \times T}$\\
-                $\W \in \mathbb{C}^{n_R \times T}$}
-            };
-    % \node at (0,0) {\parbox[b]{3cm}{\fontsize{24}{28}\selectfont Large Text\\ \fontsize{12}{14}\selectfont Normal Text}};
-\end{tikzpicture}
 \end{frame}
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -225,7 +232,7 @@ where $\hat{\phi}(\mathbf{y};\boldsymbol{\theta}) =
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 \begin{figure}[h]
-    \includegraphics[width=0.7\textwidth]{Figure_1.png}
+    \includegraphics[width=0.7\textwidth]{figures/240314/Figure_1.png}
     \caption{hidden layer sizes: [64,32], $\mu_H=5, \sigma_H=0.2, \mu_W=0, \sigma_W=0.1 $}
 \end{figure}
 
@@ -233,7 +240,7 @@ where $\hat{\phi}(\mathbf{y};\boldsymbol{\theta}) =
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 \begin{figure}
-    \includegraphics[width=0.7\textwidth]{Figure_2.png}
+    \includegraphics[width=0.7\textwidth]{figures/240314/Figure_2.png}
     \caption{increase the iterations from 2000 to 4000}
 \end{figure}
 
@@ -243,22 +250,22 @@ where $\hat{\phi}(\mathbf{y};\boldsymbol{\theta}) =
 \begin{figure}[h!]
     \centering
     \begin{subfigure}[b]{0.33\linewidth}
-      \includegraphics[width=\linewidth]{itr_500/Figure_1.png}
+      \includegraphics[width=\linewidth]{figures/240411/Figure_1.png}
     %   \caption{Image 1}
     %   \label{fig:image1}
     \end{subfigure}
     \begin{subfigure}[b]{0.33\linewidth}
-      \includegraphics[width=\linewidth]{itr_500/Figure_2.png}
+      \includegraphics[width=\linewidth]{figures/240411/Figure_2.png}
     %   \caption{Image 2}
     %   \label{fig:image2}
     \end{subfigure}
     \begin{subfigure}[b]{0.33\linewidth}
-      \includegraphics[width=\linewidth]{itr_500/Figure_3.png}
+      \includegraphics[width=\linewidth]{figures/240411/Figure_3.png}
     %   \caption{Image 3}
     %   \label{fig:image3}
     \end{subfigure}
     \begin{subfigure}[b]{0.33\linewidth}
-      \includegraphics[width=\linewidth]{itr_500/Figure_4.png}
+      \includegraphics[width=\linewidth]{figures/240411/Figure_4.png}
     %   \caption{Image 4}
     %   \label{fig:image4}
     \end{subfigure}
@@ -298,9 +305,11 @@ where $\hat{\phi}(\mathbf{y};\boldsymbol{\theta}) =
 
 \begin{itemize}
     \item Let the loss be Normalized Mean Squared Error (NMSE):
-        $$NMSE=\frac{1}{N} \sum\limits_{n=1}^N
-        \frac{\left\| \h_n-\phi(\mathbf{y}_n;\boldsymbol{\theta}_k) \right\|^2_2}
-        {\left\| \h_n \right\|^2_2}$$
+        \begin{equation} \label{NMSE}
+          NMSE=\frac{1}{N} \sum\limits_{n=1}^N
+          \frac{\left\| \h_n-\phi(\mathbf{y}_n;\boldsymbol{\theta}_k) \right\|^2_2}
+          {\left\| \h_n \right\|^2_2}
+        \end{equation}
         Here, $N$ represents the size of the training or validation dataset, 
         implying that the Normalized Mean Squared Error (NMSE) is calculated for each epoch.
     \vspace{12pt}
@@ -317,22 +326,22 @@ where $\hat{\phi}(\mathbf{y};\boldsymbol{\theta}) =
 \begin{figure}[h!]
     % \centering
     \begin{subfigure}[b]{0.33\linewidth}
-      \includegraphics[width=\linewidth]{240502/lr0.001_[2, 64, 32, 4]_ep100.png}
+      \includegraphics[width=\linewidth]{figures/240502/lr0.001_[2, 64, 32, 4]_ep100.png}
     %   \caption{lr: 1e-3, epoch: 100}
     %   \label{fig:image1}
     \end{subfigure}
     \begin{subfigure}[b]{0.33\linewidth}
-      \includegraphics[width=\linewidth]{240502/lr0.001_[2, 64, 32, 4]_ep500.png}
+      \includegraphics[width=\linewidth]{figures/240502/lr0.001_[2, 64, 32, 4]_ep500.png}
     %   \caption{lr: 1e-3, epoch: 100}
     %   \label{fig:image2}
     \end{subfigure}
     \begin{subfigure}[b]{0.33\linewidth}
-      \includegraphics[width=\linewidth]{240502/figure_1_0.0001_[2, 64, 32, 4]_ep100.png}
+      \includegraphics[width=\linewidth]{figures/240502/figure_1_0.0001_[2, 64, 32, 4]_ep100.png}
     %   \caption{Image 3}
     %   \label{fig:image3}
     \end{subfigure}
     \begin{subfigure}[b]{0.33\linewidth}
-      \includegraphics[width=\linewidth]{240502/figure_1_0.0001_[2, 64, 32, 4]_ep1000.png}
+      \includegraphics[width=\linewidth]{figures/240502/figure_1_0.0001_[2, 64, 32, 4]_ep1000.png}
     %   \caption{Image 4}
     %   \label{fig:image4}
     \end{subfigure}
@@ -350,22 +359,22 @@ where $\hat{\phi}(\mathbf{y};\boldsymbol{\theta}) =
 \begin{figure}[h!]
     % \centering
     \begin{subfigure}[b]{0.33\linewidth}
-      \includegraphics[width=\linewidth]{240502/lr2e-05_[288, 512, 256, 256, 576]_ep500.png}
+      \includegraphics[width=\linewidth]{figures/240502/lr2e-05_[288, 512, 256, 256, 576]_ep500.png}
     %   \caption{lr: 1e-3, epoch: 100}
     %   \label{fig:image1}
     \end{subfigure}
     \begin{subfigure}[b]{0.33\linewidth}
-      \includegraphics[width=\linewidth]{240502/lr2e-05_[288, 512, 512, 576]_ep500.png}
+      \includegraphics[width=\linewidth]{figures/240502/lr2e-05_[288, 512, 512, 576]_ep500.png}
     %   \caption{lr: 1e-3, epoch: 100}
     %   \label{fig:image2}
     \end{subfigure}
     \begin{subfigure}[b]{0.33\linewidth}
-      \includegraphics[width=\linewidth]{240502/figure_1_0.0001_[288, 64, 32, 576]_ep500.png}
+      \includegraphics[width=\linewidth]{figures/240502/figure_1_0.0001_[288, 64, 32, 576]_ep500.png}
     %   \caption{Image 3}
     %   \label{fig:image3}
     \end{subfigure}
     \begin{subfigure}[b]{0.33\linewidth}
-      \includegraphics[width=\linewidth]{240502/figure_1_lr0.0001_[288, 64, 32, 576]_ep2000.png}
+      \includegraphics[width=\linewidth]{figures/240502/figure_1_lr0.0001_[288, 64, 32, 576]_ep2000.png}
     %   \caption{Image 4}
     %   \label{fig:image4}
     \end{subfigure}
@@ -394,6 +403,97 @@ where $\hat{\phi}(\mathbf{y};\boldsymbol{\theta}) =
     if there is any improvment.
 
 \end{itemize}
+\end{frame}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\begin{frame}[allowframebreaks]{Discussion}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\begin{itemize}
+  \item Regarding the Rayleigh fading channel case with parameters $\mu_H = 0$ 
+    and $\sigma_H = 1$, the mean component of the output from the MLP converges 
+    to 0, while the standard deviation component converges to less than $10^{-2}$. 
+    Consequently, the sampled output tends to converge to 0.
+  \item  The output of MLP need to represent a distribution, otherwise policy
+    gradient(\ref{policy gradient}) can't be implemented.
+    \begin{center}
+      \includegraphics[width=0.45\linewidth]{figures/240509/MLP.png}
+      \includegraphics[width=0.45\linewidth]{figures/240509/softplus.png}
+    \end{center}
+
+  \framebreak
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+  \item The denominator in the NMSE(\ref{NMSE}) is close to 0.
+    Try $\mu_H \neq 0$.
+  \item The activation function of the final layer of the MLP is Softplus
+    ($\log{1+e^x}$) to make the standard deviation stay positive.\\
+    In order to deal with $\mu_H \leq 0$, changing the activation to identity 
+    function, then take the exponetial of the standard deviation part of the
+    MLP outputs.
+    \begin{center}
+      \includegraphics[width=0.45\linewidth]{figures/240509/lr0.0001_[288, 64, 32, 576]_ep500_mu5.0.png}
+      \includegraphics[width=0.45\linewidth]{figures/240509/elr0.0001_[288, 64, 32, 576]_ep500_mu0.0.png}
+    \end{center}
+
+  \framebreak
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+  \item For the case $\mu_H = 5$ the mean part of the MLP outputs are close to 5, 
+    the deviation part are less than -2. Then it just simply converge to 5.
+  \item MSE here is defined as 
+    $MSE=\frac{1}{N} \sum\limits_{n=1}^N
+    \frac{\left\| \h_n-\phi(\mathbf{y}_n;\boldsymbol{\theta}_k) \right\|^2_2}
+    {n_Tn_R}$\\
+    MSE converges to 2 when $n_T, n_R = 4, 36$ no matter $\mu_H$ is.
+  \item It seems like the estimator just let the output approach $\mu_H$,
+    then let $\hat{\h} = y$, then the MSE is much less than 2. 
+\end{itemize}
+
+\end{frame}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\begin{frame}[allowframebreaks]{Updates on 5/16}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\begin{itemize}
+  \item I increased the size of the MLP model's hidden layers to 2048 and 2048.
+      It converges better than the previous one with hidden layers of 64 and 32 (converges to 1).
+  \item The ``directly $\Y$'' curve is the LS solution
+  \item I plotted the NMSE of this model and the LSE with respect to SNR. The model's
+      curve appears unusual. Additionally, I made a mistake in calculating the signal power: 
+      it should be the power of $\H\X$ and not just $\X$.
+\end{itemize}
+
+\begin{center}
+  \includegraphics[width=0.45\linewidth]{figures/240516/N_lr5e-06_[288, 2048, 2048, 576]_ep8000_mu0.png}
+  \includegraphics[width=0.45\linewidth]{figures/240516/mlp[2048,2048]withY_snr[-50,25].png}
+\end{center}
+The figure on the right is incorrect because I mistakenly used the power of $\mathbf{X}$ instead of the 
+power of $\mathbf{HX}$.
+
+\end{frame}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\begin{frame}[allowframebreaks]{Updates on 5/23}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% \linespread{2.0}
+$\Y=\H\X+\W \xrightarrow{\text{vectorize}} \y=(\X^T\otimes\I_{n_T})\h+\w \xrightarrow{} \y=\h+\w$ \\
+
+LMMSE estimator: $\hat{\h} = \mathbb{E}[\h]+\C_{\h\y}\C^{-1}_{\y\y}(\y-\mathbb{E}[\y])
+\xrightarrow{\text{zero mean}}  \C_{\h\y}\C^{-1}_{\y\y}\y,$\\
+where $\C_{\h\y} = \mathbb{E}[\h\y^T] = \mathbb{E}[\h(\h+\w)^T] = \mathbb{E}[\h\h^T]$,\\
+$\quad \quad \quad \C_{\y\y} = \mathbb{E}[(\h+\w)(\h+\w)^T] = \mathbb{E}[\h\h^T] + \mathbb{E}[\w\w^T]$
+\begin{itemize}
+  \item ideal case: $\C_{\h\h}(\C_{\h\h}+\C_{\w\w})^{-1}\y = 
+      \sigma_{\H}^2\I(\sigma_{\H}^2\I + \sigma_{\W}^2\I)^{-1}\y = 
+      \frac{\sigma_{\H}^2}{\sigma_{\H}^2+\sigma_{\W}^2}\y$
+  \item sample case: let $\C_{\h\h} = \frac{1}{N}\sum_{n=1}^{N}\h_n\h_n^T$
+\end{itemize}
+\begin{center}
+  \includegraphics[width=0.7\linewidth]{figures/240523/mlp[2048,2048]_snr[-10.0,10.0]_4est_n.png}
+\end{center}
+This model is trained with $\sigma_{\W} = 0.1$ (SNR = 20). When trained with a group of different 
+SNR values, 
+it seems that a larger model is required.
 \end{frame}
 
 \end{document}

@@ -1,1 +1,0 @@
- python .\MMSE_PD_PG_parallel.py --ep 1 --tau 1 --nmb 1 --lr 3e-5 --nR 1 --nT 1 --hsz 1

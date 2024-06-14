@@ -1,91 +1,85 @@
 import torch
-import torch.nn as nn
-import numpy as np
-from torch.optim import Adam
 from torch.distributions.normal import Normal
 
-def mlp(sizes, activation=nn.Tanh, output_activation=nn.Softplus):
-    layers = []
-    for j in range(len(sizes)-1):
-        act = activation if j < len(sizes)-2 else output_activation
-        layers += [nn.Linear(sizes[j], sizes[j+1]), act()]
-    return nn.Sequential(*layers)
+device = torch.device("cpu")
 
-def train(size, hidden_sizes=[64, 32], lr=1e-2, epoch = 100):
-    # # make function to compute action distribution
-    # def get_policy(obs):
-    #     logits = logits_net(obs)
-    #     return Normal(logits=logits)
+num_minibatch = 2
+num_trajectories = 3
+data_size = num_trajectories*num_minibatch
+n_R = 2
+n_T = 8
+T = n_T
+H_mean,H_sigma,W_mean,W_sigma = [0,0.01,0,0.01]
 
-    # # make action selection function (outputs int actions, sampled from policy)
-    # def get_action(obs):
-    #     return get_policy(obs).sample()
-    
-    # generate the multilayer peceptron
-    n_T, n_R, T = size
-    logits_net = mlp(sizes=[2*n_R*T]+hidden_sizes+[2*2*n_R*n_T])
-    optimizer = Adam(logits_net.parameters(), lr=lr)
-    lamb, t = [0, 0]
+# # g = torch.Tensor(range(num_t*n_R*n_T)).reshape(num_t,n_R,n_T)
+# Y0 = torch.view_as_complex(torch.Tensor(range(n_R*data_size*T*2)).reshape(n_R*data_size, T, 2)).to(device) # size: 12x4 48
+# y0 = torch.view_as_real(Y0).reshape(data_size, n_R*T*2) # vectorize size: 6x16 96
+# # print(Y0)
+# # print(y0.size())
+# for j in range(num_minibatch): # 2
+#     tau_y = y0[j*num_trajectories:(j+1)*num_trajectories, :] # size: 3x16
+#     # print(tau_y)
+#     y1 = torch.view_as_complex((tau_y).reshape(num_trajectories, n_T*n_R, 2)) # take the norm line64
+#     # print(y1)
+#     # print(torch.norm(y1,dim=1))
+# Y_shuffle = Y0.reshape(data_size, n_R ,T)
+# idx = torch.randperm(Y_shuffle.shape[0])
+# Y_shuffle = Y_shuffle[idx,:,:]
+# print(Y_shuffle)
+# print(Y_shuffle.reshape(n_R*data_size, T))
 
-    H_mean = 5
-    H_sigma = 0.01
-    
-    W_mean = 0
-    W_sigma = 0.01
-    
-    X = np.tile(np.eye(n_T), int(T/n_T))
-    
+sqrt2 = 2**0.5
+X = torch.complex(torch.eye(n_T).tile(T//n_T), torch.zeros(n_T, T)).to(device)
+H = torch.view_as_complex(torch.normal(H_mean, H_sigma, size=(data_size, n_R, n_T, 2))/sqrt2).to(device)
+W_sigma = torch.Tensor([0, 10, 3])
+W_mean = W_mean*torch.ones(data_size*len(W_sigma), n_R, T, 2)
+# print(W_mean.size())
+# W_sigma = torch.tile(torch.Tensor([0, 10]),(data_size,n_R,T), dims=1)
 
-    for j in range(epoch):
-        # generate the data
-        H = np.random.normal(H_mean, H_sigma, [n_R,2*n_T]).view(np.complex128)
-        W = np.random.normal(W_mean, W_sigma, [n_R,T*2]).view(np.complex128)
-        Y = np.matmul(H,X) + W
+########## datasize stay the same but every snr has datasize/len(snr) size
+W_sigma = W_sigma.unsqueeze(1).unsqueeze(2).unsqueeze(3)
+W_sigma = W_sigma.repeat(data_size//len(W_sigma), n_R, T, 2)
 
-        # forward propagation
-        y = Y.transpose().reshape(-1).view(np.double)
-        h_hat = []
-        # print(y.shape)
-        # print(logits_net)
-        # dist = logits_net(torch.as_tensor(y, dtype=torch.float32))
-        ## dist = dist.detach().numpy().reshape(2*n_R*n_T,2)
-        logits = logits_net(torch.as_tensor(y, dtype=torch.float32))
-        # print(Normal(-1, 0).sample())
-        for i in range(int(len(logits)/2)):
-            # print(logits[2*i], logits[2*i+1])
-            h_hat.append(Normal(logits[2*i],logits[2*i+1]).sample())
-            # h_hat.append(get_action(logits[2*i],logits[2*i+1]))
-            # print(Normal(logits[2*i], logits[2*i+1]).sample())
-        # # h_hat = np.zeros(2*n_R*n_T)
-        # print(dist)
-        # print(len(dist))
-        # for i in range(len(dist)):
-        #     h_hat[i] = np.random.normal(dist[i][0],dist[i][1])
-        # h_hat = h_hat.view(np.complex128)
-        # print(h_hat.shape)
+W_sigma = torch.Tensor([0, 10, 3])
+W_sigma = W_sigma.unsqueeze(1).unsqueeze(2).unsqueeze(3)
+W_sigma = W_sigma.repeat(data_size, n_R, T, 2)
+# print(W_sigma.shape)
 
-        # compute loss and update
-        optimizer.zero_grad()
-        h = H.transpose().reshape(-1)
-        # print(h_hat)
-        # print(np.double(np.array(h_hat)).view(np.complex128))
-        norm = np.linalg.norm(h-np.double(np.array(h_hat)).view(np.complex128))
-        # print(norm)
-        PG = torch.zeros(int(len(logits)/2))
-        # print(Normal(logits)) #.log_prob(h_hat))
-        for i in range(int(len(logits)/2)):
-            # print(logits[2*i], logits[2*i+1])
-            PG[i] = norm*Normal(logits[2*i],logits[2*i+1]).log_prob(h_hat[i])
-        # print(PG)
-        # loss = np.array(PG)
-        loss = PG.mean()
-        print(norm)
-        loss.backward()
-        optimizer.step()
-        # lamb += 
+W = torch.view_as_complex(torch.normal(W_mean, W_sigma)/sqrt2).to(device)
 
+A = torch.tensor([[1, 2, 3],
+                  [4, 5, 6]], dtype=torch.float32)
 
+MC = A.shape[1]  # 这里 MC = 3
 
-if __name__ == '__main__':
-    size = [2, 4, 8]   # n_T, n_R, T
-    train(size)
+# 计算协方差矩阵
+print(torch.mean(A, dim=1))
+mean_A = torch.reshape(torch.mean(A, dim=1), (-1, 1))  # (2, 1)
+print(mean_A)
+
+# print(torch.normal(0, torch.tensor([1.0,2.0,3.0])))
+
+# print(W)
+
+# a = torch.Tensor([[1,2,3],[4,5,6]])
+# print(a.shape)
+# print(torch.mean(a,dim=1))
+# print(torch.reshape(torch.mean(a, dim=1), (-1, 1)))
+
+# Y = H.matmul(X) + W
+# h = H.reshape(data_size, n_R*n_T)
+# y = Y.reshape(data_size, n_R*T)
+# print("Y:",Y)
+# print("y:",y)
+# print("y_:",y.reshape(data_size, n_R, n_T))
+
+# x = torch.tensor([[1,2,3],[4,5,6]])
+# y = torch.tensor([[7,8,9],[5,3,1]])
+# # print(torch.stack([x,y],dim=1))
+# for a,b in x,y:
+#     print(a,b)
+
+# print(torch.stack([Y.real,Y.imag,Y.abs()],dim=1))
+# print(torch.stack([Y.real,Y.imag,Y.abs()],dim=1).reshape(num_trajectories,3,4,4))
+
+# print(5e4)

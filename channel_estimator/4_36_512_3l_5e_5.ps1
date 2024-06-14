@@ -1,1 +1,0 @@
-python .\MMSE_PD_PG_parallel.py --ep 500 --tau 4 --nmb 100 --lr 5e-5
